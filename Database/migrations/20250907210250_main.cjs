@@ -2,8 +2,9 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
- return knex.schema.createTable('setores',table=>{
+exports.up = async function(knex) {
+ await knex.schema
+ .createTable('setores',table=>{
   table.increments('ID').primary().notNullable();
   table.string('name').notNullable().defaultTo('Novo Setor');
  })
@@ -26,15 +27,47 @@ exports.up = function(knex) {
   table.float('valor').notNullable().defaultTo(0);
   table.string('customData').defaultTo('');
  })
+ .createTable('users',table=>{
+  table.increments('UID').primary().notNullable();
+  table.string('nome').notNullable();
+  table.string('email').notNullable();
+  table.string('senha').notNullable();
+  table.integer('rank').defaultTo(1);
+ })
+ .createTable('useRegister',table=>{
+  table.increments('ID').primary().notNullable();
+  table.string('user').notNullable();
+  table.string('useremail').notNullable();
+  table.string('acao').notNullable();
+  table.dateTime('data').notNullable();
+ })
+ .createTable('manutencaoLinks',table=>{
+  table.increments('ID').primary();
+  table.integer('objetoID').notNullable();
+  table.integer('manutencaoID').notNullable();
+ })
+ .createTable('manutencoes',table=>{
+  table.increments('ID').primary();
+  table.boolean('concluido').defaultTo(false);
+  table.date('data').notNullable();
+  table.date('retornoEsperado').notNullable();
+  table.float('valor').notNullable();
+  table.float('tipoObjetoID').notNullable();
+  });
 };
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
- return knex.schema
+exports.down = async function(knex) {
+  return knex.schema
+  .dropTable('users')
   .dropTable('objetos')
   .dropTable('tipoObjetos')
   .dropTable('subSetores')
   .dropTable('setores')
+  .dropTable('useRegister')
+  .dropTable('manutencoes')
+  .dropTable('manutencaoLinks')
 };
